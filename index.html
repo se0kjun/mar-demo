@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="./main.css" type="text/css">
+</head>
+<body>
+	<video id="video" width="640" height="480"></video>
+	<canvas id="test" width="640" height="480"></canvas>
+	<div id="container" width="640" height="480"></div>
+
+
+	<pre id="editor">
+	</pre>
+
+	<button id="eee">
+	  submit
+	</button>
+	<!-- load ace -->
+	<script src="./vendor/ace/src/ace.js"></script>
+
+	<script type="text/javascript" src="./vendor/jquery.min.js"></script>
+	<script type="text/javascript" src="./vendor/three.min.js"></script>
+	<script type="text/javascript" src="./vendor/JSARToolKit.min.js"></script>
+	<script type="text/javascript" src="./main.js"></script>
+
+
+<!-- 
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj" object="cube" placeholder-for="marker64"></aobject>
+	<robject id="robj" object="marker64" placeholder="cube"></robject>
+	<MAREvent id="evt" event="marker_detection"></MAREvent>
+	<MARBehavior id="bhv" behavior="only_rendering"></MARBehavior>
+	<matrix id="mtx" x="0" y="0" z="-40"></matrix>
+
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj" object="sphere" placeholder-for="marker64"></aobject>
+	<robject id="robj" object="marker64" placeholder="sphere"></robject>
+
+	<MAREvent id="evt" event="marker_detection"></MAREvent>
+	<MARBehavior id="bhv" behavior="only_rendering"></MARBehavior>
+	<matrix id="mtx" x="0" y="0" z="-40"></matrix>
+
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj" object="cube" placeholder-for="marker88"></aobject>
+	<robject id="robj" object="marker88" placeholder="cube"></robject>
+	<MAREvent id="evt" event="marker_detection"></MAREvent>
+	<MARBehavior id="bhv" behavior="only_rendering"></MARBehavior>
+	<matrix id="mtx" x="0" y="0" z="-40"></matrix>
+
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj" object="sphere" placeholder-for="marker88"></aobject>
+	<robject id="robj" object="marker88" placeholder="sphere"></robject>
+	<MAREvent id="evt" event="marker_detection"></MAREvent>
+	<MARBehavior id="bhv" behavior="only_rendering"></MARBehavior>
+	<matrix id="mtx" x="0" y="0" z="-40"></matrix>
+
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj" object="sphere" placeholder-for="marker88"></aobject>
+	<robject id="robj" object="marker88" placeholder="sphere"></robject>
+	<MAREvent id="evt" event="marker_detection"></MAREvent>
+	<MARBehavior id="bhv" behavior="only_rendering"></MARBehavior>
+	<matrix id="mtx" x="0" y="0" z="-300"></matrix>
+-->
+	<!--
+	  marker (robject-object): marker64, marker88
+	  object: cube, sphere
+ 
+	<scene id="wld"></scene>
+	<sensor id="cam"></sensor>
+	<background id="cam_based"></background>
+	<aobject id="aobj1" object="cube" placeholder-for="marker64" matrix="0,0,-80"></aobject>
+	<robject id="robj1" object="marker64" placeholder="cube"></robject>
+	<aobject id="aobj2" object="sphere" placeholder-for="marker88" matrix="50,0,0"></aobject>
+	<robject id="robj2" object="marker88" placeholder="sphere"></robject>
+	<MAREvent id="evt" event="marker_detection" marker="robject"></MAREvent>
+	<MAREvent id="no_evt" event="no_event" marker="robject"></MAREvent>
+	<MARBehavior id="bhv" behavior="show" event="evt" object="aobject"></MARBehavior>
+	<MARBehavior id="no_bhv" behavior="no_show" event="no_evt" object="aobject"></MARBehavior>
+ -->
+</body>
+</html>
+
