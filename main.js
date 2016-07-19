@@ -9,9 +9,9 @@ var MARParser = function(node) {
   this.parseNode = $(doc);
   this.textNode = node;
 
-  this.scene = this.parseNode.find('scene');
-  this.sensor = this.parseNode.find('sensor');
-  this.background = this.parseNode.find('background');
+  this.scene = this.parseNode.find('scene')[0];
+  this.sensor = this.parseNode.find('sensor')[0];
+  this.background = this.parseNode.find('background')[0];
 
   this.aobject = function() {
     return this.parseNode.find('aobject').map(function(idx, m) {
@@ -79,6 +79,43 @@ function MAREngine(parseContext) {
   this.parseContext = parseContext;
   this.setParseContext = function (context) {
     this.parseContext = context;
+    switch (context.scene.getAttribute('type')) {
+      case 'ar':
+        {
+          bgTexture = new THREE.Texture(canvas);
+          bgTexture.minFilter = THREE.LinearFilter;
+          glPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 0), new THREE.MeshBasicMaterial({
+            map: bgTexture,
+            depthTest: false,
+            depthWrite: false
+          }));
+
+          bgScene = new THREE.Scene();
+          bgCamera = new THREE.Camera();
+          bgScene.add(glPlane);
+          bgScene.add(bgCamera);
+
+          break;
+        }
+      case 'avr':
+        {
+          bgCamera = new THREE.PerspectiveCamera(70, canvas.width / canvas.height, 1, 1000);
+          bgCamera.position.z = 400;
+          bgScene = new THREE.Scene();
+
+          var geometry = new THREE.PlaneGeometry(600, 400);
+          var material = new THREE.MeshBasicMaterial({
+            color: 0x555555
+          });
+
+          var plane = new THREE.Mesh(geometry, material);
+          plane.rotation.x = -0.7;
+          bgScene.add(plane);
+          bgScene.remove(glPlane);
+          
+          break;
+        }
+    }    
   }
 
   var video = document.getElementById('video'),
@@ -86,7 +123,7 @@ function MAREngine(parseContext) {
     canvasContext = canvas.getContext("2d"),
     param, markerRoots = {};
 
-  var glRenderer, glScene, glCamera;
+  var glRenderer, glScene, glCamera, glPlane;
   var bgCamera, bgScene, bgTexture;
 
   var __webrtc_init = (function() {
@@ -125,19 +162,42 @@ function MAREngine(parseContext) {
     glCamera = new THREE.Camera();
     glScene.add(glCamera);
 
-    // Create scene and quad for the video.
-    //NOTE: must use <canvas> as the texture, not <video>, otherwise there will be a 1-frame lag
-    bgTexture = new THREE.Texture(canvas);
-    bgTexture.minFilter = THREE.LinearFilter;
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 0), new THREE.MeshBasicMaterial({
-      map: bgTexture,
-      depthTest: false,
-      depthWrite: false
-    }));
-    bgScene = new THREE.Scene();
-    bgCamera = new THREE.Camera();
-    bgScene.add(plane);
-    bgScene.add(bgCamera);
+    switch (this.parseContext.scene.getAttribute('type')) {
+      case 'ar':
+        {
+          bgTexture = new THREE.Texture(canvas);
+          bgTexture.minFilter = THREE.LinearFilter;
+          glPlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 0), new THREE.MeshBasicMaterial({
+            map: bgTexture,
+            depthTest: false,
+            depthWrite: false
+          }));
+
+          bgScene = new THREE.Scene();
+          bgCamera = new THREE.Camera();
+          bgScene.add(glPlane);
+          bgScene.add(bgCamera);
+
+          break;
+        }
+      case 'avr':
+        {
+          bgCamera = new THREE.PerspectiveCamera(70, canvas.width / canvas.height, 1, 1000);
+          bgCamera.position.z = 400;
+          bgScene = new THREE.Scene();
+
+          var geometry = new THREE.PlaneGeometry(600, 400);
+          var material = new THREE.MeshBasicMaterial({
+            color: 0x555555
+          });
+
+          var plane = new THREE.Mesh(geometry, material);
+          plane.rotation.x = -0.7;
+          bgScene.add(plane);
+          
+          break;
+        }
+    }
   })();
 
   var copyMarkerMatrix = function(arMat, glMat) {
@@ -178,8 +238,15 @@ function MAREngine(parseContext) {
     var emptyFloatArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     canvas.changed = true;
-    // Update the video texture.
-    bgTexture.needsUpdate = true;
+    
+      // Update the video texture.
+    switch (this.parseContext.scene.getAttribute('type')) {
+      case 'ar':
+        {
+          bgTexture.needsUpdate = true;
+          break;
+        }
+    }    
 
     //move all marker roots to origin so that they will disappear when not tracked
     Object.keys(markerRoots).forEach(function(key) {
@@ -320,8 +387,9 @@ document.addEventListener("DOMContentLoaded", function() {
   editor.session.setMode("ace/mode/html");
   editor.setAutoScrollEditorIntoView(true);
   editor.setOption("maxLines", 100);
+  editor.setOption("fontSize", "20px");
   editor.setValue('\
-<scene id="wld"></scene>\n\
+<scene id="wld" type="ar"></scene>\n\
 <sensor id="cam_1" calibration="default"></sensor>\n\
 <background id="cam_based" sensor="cam_1" placeholer="default"></background>\n\
 <viewpoint id="arview" parent="default"></viewpoint>\n\
@@ -347,6 +415,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   $('#eee').click(function() {
     app = new MARParser(editor.getValue());
-    engine.engineContext.parseContext = app;
+    engine.engineContext.setParseContext(app);
   });
 });
