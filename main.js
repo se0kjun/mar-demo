@@ -121,7 +121,7 @@ function MAREngine(parseContext) {
   var video = document.getElementById('video'),
     canvas = document.getElementById("test"),
     canvasContext = canvas.getContext("2d"),
-    param, markerRoots = {};
+    param, markerRoots = {}, modelLoader = new THREE.JSONLoader(), meshList = {};
 
   var glRenderer, glScene, glCamera, glPlane;
   var bgCamera, bgScene, bgTexture;
@@ -198,6 +198,13 @@ function MAREngine(parseContext) {
           break;
         }
     }
+    
+    this.parseContext.aobject().each(function(idx, item) {
+      if (item.aobject.getAttribute('type') == 'model') {
+        var loader = new THREE.JSONLoader();
+        loader.load( item.aobject.getAttribute('model-data'), function(modelGeo, modelMat) { loadModel(modelGeo, modelMat, item.aobject.getAttribute('id')); });
+      }
+    });
   })();
 
   var copyMarkerMatrix = function(arMat, glMat) {
@@ -344,9 +351,21 @@ function MAREngine(parseContext) {
       sphere.position.y = parseFloat(robject_class.referenece_transform.getAttribute('y'));
       sphere.position.z = parseFloat(robject_class.referenece_transform.getAttribute('z'));
       markerRoot.add(sphere);
+    } else if (robject_class.robject_reference[0].getAttribute('object') == "model") {
+      // model
+      var customModel = meshList[robject_class.robject_reference[0].getAttribute('id')];
+      customModel.position.x = parseFloat(robject_class.referenece_transform.getAttribute('x'));
+      customModel.position.y = parseFloat(robject_class.referenece_transform.getAttribute('y'));
+      customModel.position.z = parseFloat(robject_class.referenece_transform.getAttribute('z'));
+      markerRoot.add(customModel);
     }
 
     return markerRoot;
+  }
+  
+  function loadModel(geometry, materials, modelID) {
+    var material = new THREE.MeshFaceMaterial(materials);
+    meshList[modelID] = new THREE.Mesh( geometry, material );
   }
 
   function renderer(interval, update_context) {
@@ -399,7 +418,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <robject id="robj1" type="marker" marker-id="64" object="marker64" placeholder="#aobj1"></robject>\n\
 <robject id="robj2" type="marker" marker-id="88" object="marker88" placeholder="#aobj2"></robject>\n\
 <aobject id="aobj1" object="sphere" placeholder-for="#robj1" transform="#forAobj1" onclick ="default"></aobject>\n\
-<aobject id="aobj2" object="cube" placeholder-for="#robj2" transform="#forAobj2" onclick ="default"></aobject>\n\n\
+<aobject id="aobj2" object="cube" placeholder-for="#robj2" transform="#forAobj2" onclick ="default"></aobject>\n\
+<aobject id="aobj3" object="model" placeholder-for="#robj2" model-data="" transform="#forAobj2" onclick ="default"></aobject>\n\n\
 <MAREvent id="evt1" event="object_presence" object="#robj1" value="false"></MAREvent>\n\
 <MAREvent id="evt2" event="object_presence" object="#robj2" value="true"></MAREvent>\n\
 <MARBehavior id="bhv1" behavior="show" event="evt1.value" object="#aobj1"></MARBehavior>\n\
