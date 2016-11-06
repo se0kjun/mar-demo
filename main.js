@@ -161,6 +161,7 @@ function MAREngine(parseContext) {
     // Create a camera and a marker root object for your Three.js scene.
     glCamera = new THREE.Camera();
     glScene.add(glCamera);
+    glScene.add(new THREE.AmbientLight( 0xcccccc ));
 
     switch (this.parseContext.scene.getAttribute('type')) {
       case 'ar':
