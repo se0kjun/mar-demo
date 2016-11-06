@@ -121,7 +121,7 @@ function MAREngine(parseContext) {
   var video = document.getElementById('video'),
     canvas = document.getElementById("test"),
     canvasContext = canvas.getContext("2d"),
-    param, markerRoots = {}, modelLoader = new THREE.JSONLoader(), meshList = {};
+    param, markerRoots = {}, meshList = {}, clock = new THREE.Clock();;
 
   var glRenderer, glScene, glCamera, glPlane;
   var bgCamera, bgScene, bgTexture;
@@ -200,7 +200,7 @@ function MAREngine(parseContext) {
     }
     
     this.parseContext.aobject().each(function(idx, item) {
-      if (item.aobject.getAttribute('type') == 'model') {
+      if (item.aobject.getAttribute('object') == 'model') {
         var loader = new THREE.ColladaLoader();
         loader.load( item.aobject.getAttribute('model-data'), function(collada) { loadModel(collada, item.aobject.getAttribute('id')); });
       }
@@ -366,6 +366,15 @@ function MAREngine(parseContext) {
   function loadModel(geometry, modelID) {
 //    var material = new THREE.MeshFaceMaterial(materials);
     meshList[modelID] = geometry.scene;
+    geometry.scene.traverse( function ( child ) {
+      if ( child instanceof THREE.SkinnedMesh ) {
+        var animation = new THREE.Animation( child, child.geometry.animation );
+        animation.play();
+      }
+    });
+
+    geometry.scene.scale.x = geometry.scene.scale.y = geometry.scene.scale.z = 0.2;
+    geometry.scene.updateMatrix();      
   }
 
   function renderer(interval, update_context) {
@@ -375,7 +384,7 @@ function MAREngine(parseContext) {
     requestAnimFrame(renderer);
     canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
     trackingMarker();
-
+    THREE.AnimationHandler.update( clock.getDelta() );
     // Render the scene.
     glRenderer.autoClear = false;
     glRenderer.clear();
@@ -416,7 +425,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <Matrix id="forAobj1" x="0" y="0" z="-80"></Matrix>\n\
 <Matrix id="forAobj2" x="50" y="0" z="0"></Matrix>\n\n\
 <robject id="robj1" type="marker" marker-id="64" object="marker64" placeholder="#aobj1"></robject>\n\
-<robject id="robj2" type="marker" marker-id="88" object="marker88" placeholder="#aobj2"></robject>\n\
+<robject id="robj2" type="marker" marker-id="88" object="marker88" placeholder="#aobj3"></robject>\n\
 <aobject id="aobj1" object="sphere" placeholder-for="#robj1" transform="#forAobj1" onclick ="default"></aobject>\n\
 <aobject id="aobj2" object="cube" placeholder-for="#robj2" transform="#forAobj2" onclick ="default"></aobject>\n\
 <aobject id="aobj3" object="model" placeholder-for="#robj2" model-data="./model/monster.dae" transform="#forAobj2" onclick ="default"></aobject>\n\n\
