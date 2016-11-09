@@ -73,6 +73,10 @@ THREE.Matrix4.prototype.setFromArray = function(m) {
   );
 };
 
+        var light = new THREE.DirectionalLight( 0xffffff , 5);
+        light.position.set( -10, -15, -1 ).normalize();
+        glScene.add(light);
+        
 
 function MAREngine(parseContext) {
   // 2. PREPARING
