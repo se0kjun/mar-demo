@@ -396,13 +396,13 @@ function MAREngine(parseContext) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/tomorrow");
-  editor.session.setMode("ace/mode/html");
-  editor.setAutoScrollEditorIntoView(true);
-  editor.setOption("maxLines", 100);
-  editor.setOption("fontSize", "20px");
-  editor.setValue('\
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/tomorrow");
+    editor.session.setMode("ace/mode/html");
+    editor.setAutoScrollEditorIntoView(true);
+    editor.setOption("maxLines", 100);
+    editor.setOption("fontSize", "20px");
+    editor.setValue('\
 <scene id="wld" type="ar"></scene>\n\
 <sensor id="cam_1" calibration="default"></sensor>\n\
 <background id="cam_based" sensor="cam_1" placeholer="default"></background>\n\
@@ -410,18 +410,19 @@ document.addEventListener("DOMContentLoaded", function() {
 <calibration id="cal_1"></calibration>\n\n\
 <Matrix id="forAobj1" x="0" y="0" z="-80"></Matrix>\n\
 <Matrix id="forAobj2" x="50" y="0" z="0"></Matrix>\n\n\
-<robject id="robj1" type="marker" marker-id="64" object="marker64" placeholder="#aobj1"></robject>\n\
+<robject id="robj1" type="marker" marker-id="64" object="marker64" placeholder="#aobj4"></robject>\n\
 <robject id="robj2" type="marker" marker-id="88" object="marker88" placeholder="#aobj3"></robject>\n\
 <aobject id="aobj1" object="sphere" placeholder-for="#robj1" transform="#forAobj1" onclick ="default"></aobject>\n\
 <aobject id="aobj2" object="cube" placeholder-for="#robj2" transform="#forAobj2" onclick ="default"></aobject>\n\
-<aobject id="aobj3" object="model" placeholder-for="#robj2" model-data="./model/monster.dae" transform="#forAobj2" onclick ="default"></aobject>\n\n\
+<aobject id="aobj3" object="model" placeholder-for="#robj2" model-data="./model/sj.json" transform="#forAobj2" onclick ="default"></aobject>\n\
+<aobject id="aobj4" object="model" placeholder-for="#robj1" model-data="./model/miku.min.json" transform="#forAobj2" onclick ="default"></aobject>\n\n\
 <MAREvent id="evt1" event="object_presence" object="#robj1" value="false"></MAREvent>\n\
 <MAREvent id="evt2" event="object_presence" object="#robj2" value="true"></MAREvent>\n\
 <MARBehavior id="bhv1" behavior="show" event="evt1.value" object="#aobj1"></MARBehavior>\n\
 <MARBehavior id="bhv2" behavior="show" event="evt2.value" object="#aobj2"></MARBehavior>');
 
-  // 1. PARSING
-  var app = new MARParser(editor.getValue());
+    // 1. PARSING
+    var app = new MARParser(editor.getValue());
 
   // 2. EXECUTING
   var engine = MAREngine(app);
