@@ -282,18 +282,12 @@ function MAREngine(parseContext) {
         for (var j = 0; j < id.packetLength; j++) {
           currId = (currId << 8) | id.getPacketData(j);
         }
-      }
-
-      // If this is a new id, let's start tracking it.
-      if (markers[currId] == null) {
-        //create new object for the marker
-        markers[currId] = {};
-
-        this.parseContext.robject().each(function(idx, item) {
-          if (item.robject.getAttribute('marker-id') == currId) {
-            currItem = item;
-            return false;
-          }
+        
+        this.parseContext.aobject().each(function(idx, item) {
+            if (item.aobject.getAttribute('object') == 'model') {
+                var loader = new THREE.JSONLoader();
+                loader.load( item.aobject.getAttribute('model-data'), function(geo, mat) { loadJsonModel(geo, mat, item.aobject.getAttribute('id'));}, function(a) { console.log(a); });
+            }
         });
 
         var event_item = this.parseContext.findEvent(currItem);
@@ -325,40 +319,27 @@ function MAREngine(parseContext) {
     var markerRoot = new THREE.Object3D();
     markerRoot.matrixAutoUpdate = false;
     
-    if (robject_class.robject_reference[0].getAttribute('object') == "cube") {
-      // cube
-      var cube = new THREE.Mesh(
-        new THREE.CubeGeometry(120, 120, 120),
-        new THREE.MeshBasicMaterial({
-          color: 0xff00ff,
-          wireframe: true
-        })
-      );
-      cube.position.x = parseFloat(robject_class.referenece_transform.getAttribute('x'));
-      cube.position.y = parseFloat(robject_class.referenece_transform.getAttribute('y'));
-      cube.position.z = parseFloat(robject_class.referenece_transform.getAttribute('z'));
-      markerRoot.add(cube);
-    } else if (robject_class.robject_reference[0].getAttribute('object') == "sphere") {
-      // sphere
-      var sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(80, 40, 80),
-        new THREE.MeshBasicMaterial({
-          color: 0x0000FF,
-          wireframe: true
-        })
-      );
-      //console.log(robject_class)
-      sphere.position.x = parseFloat(robject_class.referenece_transform.getAttribute('x'));
-      sphere.position.y = parseFloat(robject_class.referenece_transform.getAttribute('y'));
-      sphere.position.z = parseFloat(robject_class.referenece_transform.getAttribute('z'));
-      markerRoot.add(sphere);
-    } else if (robject_class.robject_reference[0].getAttribute('object') == "model") {
-      // model
-      var customModel = meshList[robject_class.robject_reference[0].getAttribute('id')];
-      customModel.position.x = parseFloat(robject_class.referenece_transform.getAttribute('x'));
-      customModel.position.y = parseFloat(robject_class.referenece_transform.getAttribute('y'));
-      customModel.position.z = parseFloat(robject_class.referenece_transform.getAttribute('z'));
-      markerRoot.add(customModel);
+    function loadJsonModel(geometry, materials, modelID) {
+        materials.forEach(function (material) {
+            material.skinning = true;
+            material.opacity = 1.0;
+            material.side = THREE.DoubleSide;
+        });
+        
+        var object = new THREE.SkinnedMesh(
+            geometry,
+            new THREE.MeshFaceMaterial(materials)
+        );
+        
+        object.scale.x = object.scale.y = object.scale.z = 100;
+        object.rotation.y = 180;
+        object.rotation.x = 0;
+        object.rotation.z = 90;
+
+        animMixer  = new THREE.AnimationMixer(object);
+        meshList[modelID] = object;
+        actionList[modelID] = animMixer.clipAction( geometry.animations[ 0 ] );
+        console.log('loaded');
     }
 
     return markerRoot;
