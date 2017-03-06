@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <aobject id="aobj2" object="cube" placeholder-for="#robj2" transform="#forAobj2" onclick ="default"></aobject>\n\
 <aobject id="aobj3" object="model" placeholder-for="#robj2" model-data="./model/sj.json" transform="#forAobj2" onclick ="default"></aobject>\n\
 <aobject id="aobj4" object="model" placeholder-for="#robj1" model-data="./model/miku.min.json" transform="#forAobj2" onclick ="default"></aobject>\n\n\
-<MAREvent id="evt1" event="object_presence" object="#robj1" value="false"></MAREvent>\n\
+<MAREvent id="evt1" event="object_presence" object="#robj1" value="true"></MAREvent>\n\
 <MAREvent id="evt2" event="object_presence" object="#robj2" value="true"></MAREvent>\n\
 <MARBehavior id="bhv1" behavior="show" event="evt1.value" object="#aobj1"></MARBehavior>\n\
 <MARBehavior id="bhv2" behavior="show" event="evt2.value" object="#aobj2"></MARBehavior>');
